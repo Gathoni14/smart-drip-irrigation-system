@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - Drip Irrigation</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="dashboard">
+    <h1>💧 Drip Irrigation Dashboard</h1>
+
+    <div class="sensor-grid">
+      <div class="card">
+        <h3>Soil Moisture</h3>
+        <p id="moisture">-- %</p>
+      </div>
+
+      <div class="card">
+        <h3>Water Flow</h3>
+        <p id="flow">-- L/min</p>
+      </div>
+
+      <div class="card">
+        <h3>Valve Status</h3>
+        <p id="valve">--</p>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section">
+      <div class="chart-container">
+        <h3>Soil Moisture Trend</h3>
+        <canvas id="moistureChart"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <h3>Water Flow Trend</h3>
+        <canvas id="flowChart"></canvas>
+      </div>
+    </div>
+
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <script>
+    // --- Simulated Sensor Data ---
+    function getRandom(min, max) {
+      return (Math.random() * (max - min) + min).toFixed(1);
+    }
+
+    const moistureEl = document.getElementById("moisture");
+    const flowEl = document.getElementById("flow");
+    const valveEl = document.getElementById("valve");
+
+    // --- Chart.js Setup ---
+    const moistureChart = new Chart(document.getElementById("moistureChart"), {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [{
+          label: "Soil Moisture (%)",
+          data: [],
+          borderColor: "#2e7d32",
+          borderWidth: 2,
+          fill: false,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        animation: false,
+        scales: {
+          y: { beginAtZero: true, max: 100 },
+        },
+      },
+    });
+
+    const flowChart = new Chart(document.getElementById("flowChart"), {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [{
+          label: "Water Flow (L/min)",
+          data: [],
+          borderColor: "#0288d1",
+          borderWidth: 2,
+          fill: false,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        animation: false,
+        scales: {
+          y: { beginAtZero: true, max: 5 },
+        },
+      },
+    });
+
+    // --- Update Function ---
+    function updateSensors() {
+      const moisture = getRandom(30, 90);
+      const flow = getRandom(0.5, 3.0);
+      const valve = Math.random() > 0.5 ? "OPEN" : "CLOSED";
+
+      moistureEl.textContent = moisture + " %";
+      flowEl.textContent = flow + " L/min";
+      valveEl.textContent = valve;
+
+      const time = new Date().toLocaleTimeString();
+
+      // Keep only the last 10 data points
+      if (moistureChart.data.labels.length > 10) {
+        moistureChart.data.labels.shift();
+        moistureChart.data.datasets[0].data.shift();
+        flowChart.data.labels.shift();
+        flowChart.data.datasets[0].data.shift();
+      }
+
+      // Add new data
+      moistureChart.data.labels.push(time);
+      moistureChart.data.datasets[0].data.push(moisture);
+      flowChart.data.labels.push(time);
+      flowChart.data.datasets[0].data.push(flow);
+
+      // Update charts
+      moistureChart.update();
+      flowChart.update();
+    }
+
+    setInterval(updateSensors, 2000);
+    updateSensors();
+
+    // Logout button
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("token");
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
+   

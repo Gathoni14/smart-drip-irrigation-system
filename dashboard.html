@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - Drip Irrigation</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="dashboard">
+    <h1>💧 Drip Irrigation Dashboard</h1>
+
+    <div class="sensor-grid">
+      <div class="card">
+        <h3>Soil Moisture</h3>
+        <p id="moisture">-- %</p>
+      </div>
+
+      <div class="card">
+        <h3>Water Flow</h3>
+        <p id="flow">-- L/min</p>
+      </div>
+
+      <div class="card">
+        <h3>Valve Status</h3>
+        <p id="valve">--</p>
+      </div>
+    </div>
+
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <script>
+    // Real-time simulation (in real setup, replace with WebSocket or backend polling)
+    function getRandom(min, max) {
+      return (Math.random() * (max - min) + min).toFixed(1);
+    }
+
+    function updateSensors() {
+      document.getElementById("moisture").textContent = getRandom(30, 90) + " %";
+      document.getElementById("flow").textContent = getRandom(0.5, 3.0) + " L/min";
+      document.getElementById("valve").textContent =
+        Math.random() > 0.5 ? "OPEN" : "CLOSED";
+    }
+
+    setInterval(updateSensors, 2000);
+    updateSensors();
+
+    // Logout
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("token");
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
